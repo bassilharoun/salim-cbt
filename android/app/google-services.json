@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "362798120813",
+    "project_id": "salim-cbt",
+    "storage_bucket": "salim-cbt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:362798120813:android:f9bc18a633b41e11ab6464",
+        "android_client_info": {
+          "package_name": "com.example.salim_cbt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx9dXJuwC010SZ3OVnEZh2ZFDXGysS6os"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
