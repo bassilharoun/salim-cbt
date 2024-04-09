@@ -6,8 +6,19 @@ class AppTextForm {
   final String hintText;
   IconData suffixIcon;
   Color suffixColor;
-  AppTextForm(this.textController, this.hintText,
-      {this.suffixIcon = Icons.done, this.suffixColor = Colors.green});
+  bool isPassword;
+  VoidCallback? suffixFunction;
+
+  String? Function(String?)? validator;
+  AppTextForm(
+    this.textController,
+    this.hintText,
+    this.validator, {
+    this.suffixIcon = Icons.done,
+    this.suffixFunction,
+    this.suffixColor = Colors.green,
+    this.isPassword = false,
+  });
 
   Widget inputDecoration() {
     return Container(
@@ -18,15 +29,20 @@ class AppTextForm {
             spreadRadius: 0,
             color: Colors.grey.withOpacity(.1)),
       ]),
-      child: TextField(
+      child: TextFormField(
+        obscureText: isPassword,
+        validator: validator,
         controller: textController,
         onChanged: (value) {
           //Do something wi
         },
         decoration: InputDecoration(
-          suffixIcon: Icon(
-            suffixIcon,
-            color: suffixColor,
+          suffixIcon: GestureDetector(
+            onTap: suffixFunction,
+            child: Icon(
+              suffixIcon,
+              color: suffixColor,
+            ),
           ),
           filled: true,
           fillColor: Color(0xffF2F3F7),

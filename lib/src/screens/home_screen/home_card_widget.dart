@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:salim_cbt/src/common_widgets/app_buttons.dart';
 import 'package:salim_cbt/src/common_widgets/app_text.dart';
-import 'package:salim_cbt/src/screens/course_details_screen/course_details_screen.dart';
+import 'package:salim_cbt/src/screens/my_fears_screen/course_details_screen.dart';
 
 class HomeCardWidget extends StatelessWidget {
   final String backgroundImage;

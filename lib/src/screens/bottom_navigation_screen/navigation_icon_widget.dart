@@ -18,8 +18,8 @@ class NavigationIconWidget extends StatelessWidget {
         isSelected ? Colors.white : context.theme.unselectedNavIconColor;
 
     return Container(
-      padding: const EdgeInsets.all(4),
-      margin: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.all(12),
+      // margin: const EdgeInsets.symmetric(vertical: 5),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(
           Radius.circular(13),

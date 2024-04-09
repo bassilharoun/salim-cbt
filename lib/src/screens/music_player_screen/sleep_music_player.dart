@@ -1,8 +1,13 @@
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:rxdart/rxdart.dart';
 import 'dart:math' as math;
 
 import 'package:salim_cbt/src/common_widgets/app_text.dart';
+import 'package:salim_cbt/src/models/models.dart';
+import 'package:salim_cbt/src/screens/music_player_screen/character_switch.dart';
 
 class MusicPlayerColors {
   final String background;
@@ -31,18 +36,57 @@ var darkMusicPlayerColors = MusicPlayerColors(
   Colors.white,
 );
 
-class MusicPlayer extends StatelessWidget {
+class MusicPlayer extends StatefulWidget {
   final bool sleepPlayer;
+  IdeaModel idea;
 
-  const MusicPlayer({
+  MusicPlayer({
     Key? key,
+    required this.idea,
     this.sleepPlayer = false,
   }) : super(key: key);
 
   @override
+  State<MusicPlayer> createState() => _MusicPlayerState();
+}
+
+class PositionData {
+  const PositionData(this.position, this.bufferedPosition, this.duration);
+  final Duration position;
+  final Duration bufferedPosition;
+  final Duration duration;
+}
+
+class _MusicPlayerState extends State<MusicPlayer> {
+  late AudioPlayer _audioPlayer;
+
+  Stream<PositionData> get _positionDataStream =>
+      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+        _audioPlayer.positionStream,
+        _audioPlayer.bufferedPositionStream,
+        _audioPlayer.durationStream,
+        (position, bufferedPosition, duration) =>
+            PositionData(position, bufferedPosition, duration ?? Duration.zero),
+      );
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer()
+      ..setUrl(
+          "https://firebasestorage.googleapis.com/v0/b/salim-cbt.appspot.com/o/audio%2F%D8%A7%D9%84%D8%B4%D9%8A%D8%AE-%D8%A7%D8%B3%D9%84%D8%A7%D9%85%20%D9%A1%D9%A9%D9%A1.m4a?alt=media&token=d412557d-0946-4390-b3e2-b3d456d403ae");
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     MusicPlayerColors musicPlayerColors =
-        sleepPlayer ? darkMusicPlayerColors : lightMusicPlayerColors;
+        widget.sleepPlayer ? darkMusicPlayerColors : lightMusicPlayerColors;
 
     return Scaffold(
       backgroundColor: const Color(0xff03174C),
@@ -64,27 +108,37 @@ class MusicPlayer extends StatelessWidget {
             children: [
               getHeaderIcons(context, musicPlayerColors),
               const Spacer(
-                flex: 5,
+                flex: 3,
               ),
-              AppText.normalText(
-                "Night Sleep",
-                fontSize: 34,
-                isBold: true,
-                color: musicPlayerColors.primaryTextColor,
-              ),
-              const SizedBox(height: 15),
-              AppText.normalText(
-                "Sleep Music",
-                fontSize: 14,
-                color: musicPlayerColors.secondaryTextColor,
-              ),
+              TwoSvgSwitcher(svgAssetPaths: [
+                "assets/images/breathing/light_breath_in.svg",
+                "assets/images/breathing/light_breath_out.svg"
+              ]),
               const Spacer(
                 flex: 1,
               ),
               getMusicControls(musicPlayerColors),
               const Spacer(
-                flex: 3,
+                flex: 1,
               ),
+              StreamBuilder(
+                  stream: _positionDataStream,
+                  builder: (context, snapshot) {
+                    final positionData = snapshot.data;
+                    return ProgressBar(
+                      baseBarColor: Color(0xffA0A3B1),
+                      bufferedBarColor: Color(0xffA0A3B1),
+                      progressBarColor: Color(0xff3F414E),
+                      thumbColor: Color(0xff3F414E),
+                      progress: positionData?.position ?? Duration.zero,
+                      buffered: positionData?.bufferedPosition ?? Duration.zero,
+                      total: positionData?.duration ?? Duration.zero,
+                      onSeek: _audioPlayer.seek,
+                    );
+                  }),
+              Spacer(
+                flex: 3,
+              )
             ],
           ),
         ),
@@ -104,66 +158,129 @@ class MusicPlayer extends StatelessWidget {
             Icons.close,
           ),
         ),
-        const Spacer(),
-        AppIconButton(
-          Icons.favorite,
-          backgroundColor: musicPlayerColors.iconBackgroundColor,
-          iconColor: musicPlayerColors.iconColor,
-        ),
-        const SizedBox(width: 15),
-        AppIconButton(
-          Icons.download,
-          backgroundColor: musicPlayerColors.iconBackgroundColor,
-          iconColor: musicPlayerColors.iconColor,
+        SizedBox(width: 20),
+        Expanded(
+          child: AppText.normalText(
+            "${widget.idea.title}",
+            fontSize: 16,
+            // isBold: true,
+            color: musicPlayerColors.primaryTextColor,
+          ),
         ),
       ],
     );
   }
 
   Widget getMusicControls(MusicPlayerColors musicPlayerColors) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ForwardWidget(
-          color: musicPlayerColors.primaryTextColor,
-        ),
-        const SizedBox(width: 50),
-        Icon(
-          Icons.pause_circle_filled,
-          size: 80,
-          color: musicPlayerColors.primaryTextColor,
-        ),
-        const SizedBox(width: 50),
-        BackWidget(
-          color: musicPlayerColors.primaryTextColor,
-        ),
-      ],
-    );
+    return StreamBuilder(
+        stream: _audioPlayer.playerStateStream,
+        builder: ((context, snapshot) {
+          final playerState = snapshot.data;
+          final processingState = playerState?.processingState;
+          final playing = playerState?.playing;
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  // back 15 seconds
+
+                  _audioPlayer.seek(
+                      _audioPlayer.position - const Duration(seconds: 15));
+                },
+                child: Stack(
+                  children: [
+                    Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.rotationY(math.pi),
+                      child: ChangePlayBackIcon(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: AppText.normalText(
+                          "15",
+                          fontSize: 10,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(width: 50),
+              !(playing ?? false)
+                  ? IconButton(
+                      onPressed: _audioPlayer.play,
+                      icon: Icon(
+                        Icons.play_circle_fill,
+                        size: 80,
+                        color: musicPlayerColors.primaryTextColor,
+                      ),
+                    )
+                  : IconButton(
+                      onPressed: _audioPlayer.pause,
+                      icon: Icon(
+                        Icons.pause_circle_filled,
+                        size: 80,
+                        color: musicPlayerColors.primaryTextColor,
+                      ),
+                    ),
+              const SizedBox(width: 50),
+              GestureDetector(
+                onTap: () {
+                  // forward 15 seconds
+                  _audioPlayer.seek(
+                      _audioPlayer.position + const Duration(seconds: 15));
+                },
+                child: Stack(
+                  children: [
+                    ChangePlayBackIcon(
+                      color: Colors.grey,
+                    ),
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: AppText.normalText(
+                          "15",
+                          fontSize: 10,
+                          color: const Color(0xff98A1BD),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          );
+        }));
   }
 }
 
-class LightMusicPlayer extends StatefulWidget {
-  const LightMusicPlayer({Key? key}) : super(key: key);
+// class LightMusicPlayer extends StatefulWidget {
+//   const LightMusicPlayer({Key? key}) : super(key: key);
 
-  @override
-  _LightMusicPlayerState createState() => _LightMusicPlayerState();
-}
+//   @override
+//   _LightMusicPlayerState createState() => _LightMusicPlayerState();
+// }
 
-class _LightMusicPlayerState extends State<LightMusicPlayer> {
-  @override
-  Widget build(BuildContext context) {
-    return const MusicPlayer();
-  }
-}
+// class _LightMusicPlayerState extends State<LightMusicPlayer> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MusicPlayer();
+//   }
+// }
 
-class SleepMusicPlayer extends StatelessWidget {
-  const SleepMusicPlayer({Key? key}) : super(key: key);
+// class SleepMusicPlayer extends StatelessWidget {
+//   const SleepMusicPlayer({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return const LightMusicPlayer();
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return const LightMusicPlayer();
+//   }
+// }
 
 class AppIconButton extends StatelessWidget {
   final IconData iconData;
@@ -218,26 +335,29 @@ class ForwardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.rotationY(math.pi),
-          child: ChangePlayBackIcon(
-            color: color,
-          ),
-        ),
-        Positioned.fill(
-          child: Align(
+    return GestureDetector(
+      onTap: () {},
+      child: Stack(
+        children: [
+          Transform(
             alignment: Alignment.center,
-            child: AppText.normalText(
-              "15",
-              fontSize: 10,
+            transform: Matrix4.rotationY(math.pi),
+            child: ChangePlayBackIcon(
               color: color,
             ),
           ),
-        )
-      ],
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.center,
+              child: AppText.normalText(
+                "15",
+                fontSize: 10,
+                color: color,
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

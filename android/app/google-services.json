@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "362798120813",
+    "firebase_url": "https://salim-cbt-default-rtdb.firebaseio.com",
     "project_id": "salim-cbt",
     "storage_bucket": "salim-cbt.appspot.com"
   },

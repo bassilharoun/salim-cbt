@@ -35,6 +35,7 @@ class CategoryItem extends StatelessWidget {
             )),
         SizedBox(height: 10),
         AppText.normalText(categoryName,
+            maxLines: 4,
             fontSize: 14,
             color: index == cubit.selectedCategory
                 ? LightThemeData().blackTextColor

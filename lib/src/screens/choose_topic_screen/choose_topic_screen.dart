@@ -5,6 +5,7 @@ import 'package:salim_cbt/src/app_cubit/app_states.dart';
 import 'package:salim_cbt/src/common_widgets/app_buttons.dart';
 import 'package:salim_cbt/src/common_widgets/app_text.dart';
 import 'package:salim_cbt/src/common_widgets/category.dart';
+import 'package:salim_cbt/src/models/models.dart';
 import 'package:salim_cbt/src/screens/bottom_navigation_screen/bottom_navigation_screen.dart';
 import 'package:salim_cbt/src/screens/choose_topic_screen/topics_dummy_data.dart';
 import 'package:salim_cbt/src/screens/choose_topic_screen/topics_waterfall_widget.dart';
@@ -12,11 +13,13 @@ import 'package:salim_cbt/src/screens/ideas_screen/ideas_screen.dart';
 import 'package:salim_cbt/src/themes/theme.dart';
 
 class ChooseTopicScreen extends StatelessWidget {
-  const ChooseTopicScreen({Key? key}) : super(key: key);
+  String name;
+  String email;
+  String password;
+  ChooseTopicScreen(this.name, this.email, this.password);
 
   @override
   Widget build(BuildContext context) {
-    var selectedCategory = 0;
     var cubit = AppCubit.get(context);
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
@@ -58,8 +61,7 @@ class ChooseTopicScreen extends StatelessWidget {
                       // text button
                       TextButton(
                         onPressed: () {
-                          print(cubit.ideas);
-                          cubit.getIdeasFromFears;
+                          // print(cubit.ideas);
                           onNextButtonPressed(context);
                         },
                         child: AppText.normalText(
@@ -105,9 +107,19 @@ class ChooseTopicScreen extends StatelessWidget {
     );
   }
 
-  void onNextButtonPressed(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => IdeaScreen()),
-    );
+  void onNextButtonPressed(
+    BuildContext context,
+  ) {
+    AppCubit.get(context).getIdeasFromFears().then((value) {
+      print("navigate");
+
+      print(AppCubit.get(context).ideas.length);
+      print("navigate");
+      Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) =>
+                IdeaScreen(AppCubit.get(context).ideas, name, email, password)),
+      );
+    });
   }
 }

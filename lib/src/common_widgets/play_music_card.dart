@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:salim_cbt/src/common_widgets/app_buttons.dart';
 import 'package:salim_cbt/src/screens/music_player_screen/sleep_music_player.dart';
+import 'package:salim_cbt/src/themes/theme.dart';
 
 class PlayMusicCard extends StatelessWidget {
-  final String imageBackground;
   final String title;
   final String subText;
   final Color color;
 
   const PlayMusicCard({
     Key? key,
-    required this.imageBackground,
     required this.title,
     required this.subText,
     required this.color,
@@ -20,62 +20,62 @@ class PlayMusicCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => onClicked(context),
       child: Container(
-        height: 100,
+        height: 70,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          image: DecorationImage(
-            image: AssetImage(imageBackground),
-            fit: BoxFit.cover,
-          ),
+          borderRadius: BorderRadius.circular(8),
+          color: LightThemeData().primaryColor,
         ),
         padding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 15,
+          horizontal: 5,
+          vertical: 5,
         ),
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 30,
+            horizontal: 5,
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: color,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        subText,
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 12,
-                          color: color.withOpacity(0.5),
-                        ),
-                        textAlign: TextAlign.left,
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 16,
+                        color: color,
                       ),
-                    ],
-                  ),
-                ],
+                      textAlign: TextAlign.left,
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.alarm, color: color, size: 20),
+                        SizedBox(width: 5),
+                        Text(
+                          subText,
+                          style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 14,
+                            color: color,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const Spacer(),
-              Icon(
-                Icons.play_circle_fill,
-                color: color,
-                size: 40,
-              )
+              Expanded(
+                child: AppButtons.borderedButton("ادفع الان",
+                    buttonColor: LightThemeData().whiteTextColor,
+                    onPressed: () {
+                  onClicked(context);
+                }),
+              ),
             ],
           ),
         ),
@@ -84,9 +84,9 @@ class PlayMusicCard extends StatelessWidget {
   }
 
   void onClicked(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const LightMusicPlayer()),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => const LightMusicPlayer()),
+    // );
   }
 }

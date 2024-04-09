@@ -6,6 +6,8 @@ import 'package:salim_cbt/firebase_options.dart';
 import 'package:salim_cbt/src/app_cubit/app_cubit.dart';
 import 'package:salim_cbt/src/app_cubit/app_states.dart';
 import 'package:salim_cbt/src/components/bloc_observer.dart';
+import 'package:salim_cbt/src/components/network/local/cache_helper.dart';
+import 'package:salim_cbt/src/screens/splash_screen/splash_view.dart';
 import 'package:salim_cbt/src/screens/welcome_screen.dart';
 import 'package:salim_cbt/src/themes/theme.dart';
 
@@ -18,19 +20,24 @@ void main() async {
   );
 
   Bloc.observer = MyBlocObserver();
+  await CacheHelper.init();
 
-  runApp(const MyApp());
+  runApp(MyApp(
+        startWidget: SplashView(),
+
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final Widget? startWidget;
+  MyApp({this.startWidget});
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-            create: (BuildContext context) => AppCubit()..getFearsData())
+            create: (BuildContext context) => AppCubit())
       ],
       child: AppTheme(
         child: Builder(
@@ -41,7 +48,7 @@ class MyApp extends StatelessWidget {
                   return MaterialApp(
                     debugShowCheckedModeBanner: false,
                     theme: context.theme.material,
-                    home: const AppStartingPage(),
+                    home: startWidget,
                   );
                 });
           },

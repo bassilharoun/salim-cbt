@@ -7,9 +7,12 @@ class AppText {
     double fontSize = 18,
     Color color = const Color(0xff3F414E),
     bool isBold = false,
-    TextAlign textAlign = TextAlign.center,
+    TextAlign textAlign = TextAlign.start,
+    int maxLines = 1,
   }) {
     return Text(
+      overflow: TextOverflow.ellipsis,
+      maxLines: maxLines,
       text,
       style: TextStyle(
         fontSize: fontSize,

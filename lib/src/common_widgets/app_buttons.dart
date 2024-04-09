@@ -24,9 +24,8 @@ class AppButtons {
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radius),
-        ),
+        ), backgroundColor: buttonColor,
         elevation: 0,
-        primary: buttonColor,
         padding: padding,
       ),
       child: Padding(
@@ -61,9 +60,8 @@ class AppButtons {
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radius),
-        ),
+        ), backgroundColor: buttonColor,
         elevation: 0,
-        primary: buttonColor,
         padding: padding,
         // add border color
         side: BorderSide(color: borderColor, width: 0.1),
@@ -86,6 +84,44 @@ class AppButtons {
               color: textColor,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  static Widget borderedButton(
+    String text, {
+    Function? onPressed,
+    double fontSize = 12,
+    Color buttonColor = Colors.white,
+    Color textColor = Colors.white,
+    Color borderColor = Colors.white,
+    double radius = 4,
+  }) {
+    return Container(
+      width: 100,
+      height: 33,
+      child: ElevatedButton(
+        onPressed: () {
+          if (onPressed != null) {
+            onPressed.call();
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radius),
+          ), backgroundColor: buttonColor.withOpacity(0),
+          elevation: 0,
+          side: BorderSide(color: borderColor, width: 1),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
+          child: AppText.normalText(
+            text,
+            isBold: true,
+            fontSize: fontSize,
+            color: textColor,
+          ),
         ),
       ),
     );

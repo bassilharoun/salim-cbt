@@ -42,9 +42,10 @@ class LightThemeData extends AppThemeData {
 
   Color get headerTextColor => const Color(0xff3f414e);
   Color get bodyTextColor => const Color(0xffA1A4B2);
-  Color get whiteTextColor => const Color(0xffffffff);
+  Color get whiteTextColor => const Color(0xffFFFFFF);
   Color get blackTextColor => const Color(0xff000000);
   Color get facebookColor => const Color(0xff7583CA);
+  Color get starColor => const Color(0xffFFD700);
 
   Color get selectedNavIconColor => const Color(0xff8E97FD);
   Color get selectedNavTextColor => const Color(0xff8E97FD);

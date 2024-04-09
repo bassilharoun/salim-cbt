@@ -8,11 +8,13 @@ import 'package:salim_cbt/src/themes/theme.dart';
 class TopicCardWidget extends StatelessWidget {
   final FearModel fear;
   final bool isSelected;
+  final String image;
 
   final double radius = 10.0;
 
   const TopicCardWidget(
-    this.fear, {
+    this.fear,
+    this.image, {
     Key? key,
     this.isSelected = false,
   }) : super(key: key);
@@ -25,7 +27,7 @@ class TopicCardWidget extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(radius),
           child: SvgPicture.asset(
-            AppCubit.get(context).getRandomImage(),
+            image,
             fit: BoxFit.fill,
           ),
         ),
@@ -61,6 +63,7 @@ class TopicCardWidget extends StatelessWidget {
                   fear.title,
                   isBold: true,
                   fontSize: 14,
+                  maxLines: 4,
                   textAlign: TextAlign.start,
                   color: LightThemeData().whiteTextColor,
                 ),

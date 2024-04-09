@@ -39,8 +39,6 @@ class MeditateScreen extends StatelessWidget {
             const IconWithBottomTextRow(),
             const SizedBox(height: 30),
             const PlayMusicCard(
-              imageBackground:
-                  "assets/images/home_cards/play_music_card_light.png",
               title: "Daily Calm",
               subText: "APR 30 PAUSE PRACTICE",
               color: Colors.black,
