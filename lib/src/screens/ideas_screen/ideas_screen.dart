@@ -4,6 +4,7 @@ import 'package:salim_cbt/src/app_cubit/app_cubit.dart';
 import 'package:salim_cbt/src/app_cubit/app_states.dart';
 import 'package:salim_cbt/src/common_widgets/app_buttons.dart';
 import 'package:salim_cbt/src/common_widgets/app_text.dart';
+import 'package:salim_cbt/src/components/components.dart';
 import 'package:salim_cbt/src/models/models.dart';
 import 'package:salim_cbt/src/screens/bottom_navigation_screen/bottom_navigation_screen.dart';
 import 'package:salim_cbt/src/themes/theme.dart';
@@ -83,8 +84,17 @@ class _IdeaScreentate extends State<IdeaScreen> {
                               state is AppSignupLoadingState
                                   ? "جاري التحميل..."
                                   : "أبدأ رحلتك", onPressed: () {
-                            AppCubit.get(context).signUpWithEmailAndPassword(
-                                widget.email, widget.password, widget.name);
+                            if (widget.email == "") {
+                              AppCubit.get(context)
+                                  .changeUserIdeas()
+                                  .then((value) {
+                                navigateAndFinish(
+                                    context, BottomNavigationScreen());
+                              });
+                            } else {
+                              AppCubit.get(context).signUpWithEmailAndPassword(
+                                  widget.email, widget.password, widget.name);
+                            }
                           }),
                         )
                       : Container(

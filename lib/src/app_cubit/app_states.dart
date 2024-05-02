@@ -37,3 +37,17 @@ class AppGetAdvertisementDataErrorState extends AppStates {}
 class AppLogoutLoadingState extends AppStates {}
 
 class AppLogoutSuccessState extends AppStates {}
+
+class AppGoogleSignInLoadingState extends AppStates {}
+
+class AppGoogleSignInSuccessState extends AppStates {}
+
+class AppGoogleSignInErrorState extends AppStates {}
+
+class AppFacebookSignInLoadingState extends AppStates {}
+
+class AppFacebookSignInSuccessState extends AppStates {}
+
+class AppFacebookSignInErrorState extends AppStates {}
+
+class AppChangeSelectedIndexState extends AppStates {}

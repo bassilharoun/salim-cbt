@@ -20,7 +20,9 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AppCubit cubit = AppCubit.get(context);
     return BlocConsumer<AppCubit, AppStates>(listener: (context, state) {
-      if (state is AppLoginSuccessState) {
+      if (state is AppLoginSuccessState ||
+          state is AppGoogleSignInSuccessState ||
+          state is AppFacebookSignInSuccessState) {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => BottomNavigationScreen()),
@@ -80,11 +82,7 @@ class LoginScreen extends StatelessWidget {
                           buttonColor: LightThemeData().facebookColor,
                           borderColor: LightThemeData().facebookColor,
                           onPressed: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) => SigninScreen()),
-                            // );
+                            cubit.facebookSignIn();
                           },
                         ),
                       ),
@@ -96,11 +94,7 @@ class LoginScreen extends StatelessWidget {
                           "اكمل بواسطة جوجل",
                           buttonColor: Colors.transparent,
                           onPressed: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) => SigninScreen()),
-                            // );
+                            cubit.googleSignIn();
                           },
                         ),
                       ),
@@ -131,9 +125,8 @@ class LoginScreen extends StatelessWidget {
                         return null;
                       }).inputDecoration(),
                       SizedBox(height: 15),
-                      AppTextForm(passwordController, "كلمة المرور", 
-                      isPassword: true,
-                      (val) {
+                      AppTextForm(passwordController, "كلمة المرور",
+                          isPassword: true, (val) {
                         if (val!.isEmpty || val.length < 6) {
                           return "كلمة المرور لا يمكن ان تكون اقل من 6 حروف";
                         }

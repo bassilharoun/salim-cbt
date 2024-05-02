@@ -8,6 +8,7 @@ import 'package:salim_cbt/src/common_widgets/app_text.dart';
 import 'package:salim_cbt/src/components/components.dart';
 import 'package:salim_cbt/src/models/models.dart';
 import 'package:salim_cbt/src/screens/auth/login_screen.dart';
+import 'package:salim_cbt/src/screens/choose_topic_screen/choose_topic_screen.dart';
 import 'package:salim_cbt/src/screens/my_fears_screen/course_details_screen.dart';
 import 'package:salim_cbt/src/themes/theme.dart';
 
@@ -52,10 +53,15 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 CircleAvatar(
                   radius: 60,
+                  backgroundColor: cubit.isUserPremium()
+                      ? Colors.amber
+                      : LightThemeData().primaryColor,
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(userModel.image ??
-                        "https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled-1150x647.png"),
+                    backgroundImage: NetworkImage(
+                        userModel.image == null || userModel.image == ""
+                            ? "https://avatar.iran.liara.run/public/49"
+                            : userModel.image!),
                   ),
                 ),
                 SizedBox(
@@ -122,12 +128,13 @@ class ProfileScreen extends StatelessWidget {
                             Row(
                               children: [
                                 AppText.normalText(
-                                  "password",
+                                  "is premium",
                                   fontSize: 16,
                                   color: LightThemeData().blackTextColor,
                                 ),
                                 Spacer(),
-                                AppText.normalText("*********",
+                                AppText.normalText(
+                                    cubit.isUserPremium() ? "Yes" : "No",
                                     fontSize: 16,
                                     color: LightThemeData().blackTextColor,
                                     isBold: true),
@@ -183,7 +190,18 @@ class ProfileScreen extends StatelessWidget {
                                       isBold: true),
                                   Spacer(),
                                   IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ChooseTopicScreen(
+                                                    "",
+                                                    "",
+                                                    "",
+                                                  )),
+                                        );
+                                      },
                                       icon: Icon(CupertinoIcons.pen))
                                 ],
                               ),

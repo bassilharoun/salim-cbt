@@ -8,12 +8,25 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:362798120813:android:f9bc18a633b41e11ab6464",
+        "mobilesdk_app_id": "1:362798120813:android:3a776cf5208dcbb0ab6464",
         "android_client_info": {
           "package_name": "com.example.salim_cbt"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "362798120813-ahru52km72n9cpdkltvsrvm4pao9tm4q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.salim_cbt",
+            "certificate_hash": "ca0670573cd4017918021aacf36a36cf0aa4f530"
+          }
+        },
+        {
+          "client_id": "362798120813-4p42c56b2n3roohfa81nl9vcjl91dn5f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAx9dXJuwC010SZ3OVnEZh2ZFDXGysS6os"
@@ -21,7 +34,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "362798120813-4p42c56b2n3roohfa81nl9vcjl91dn5f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "362798120813-56aeonhip1jkjdkljt7h14jskptf4alr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.salimCbt.RunnerTests"
+              }
+            }
+          ]
         }
       }
     }

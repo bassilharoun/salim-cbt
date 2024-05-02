@@ -4,9 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:salim_cbt/src/components/constans.dart';
 import 'package:salim_cbt/src/components/network/local/cache_helper.dart';
 import 'package:salim_cbt/src/models/models.dart';
+import 'package:salim_cbt/src/screens/bottom_navigation_screen/navigation_tabs.dart';
 
 import 'app_states.dart';
 
@@ -245,10 +248,10 @@ class AppCubit extends Cubit<AppStates> {
         print(value.data());
         userModel = UserModel.fromJson(value.data() as Map<String, dynamic>);
         // CacheHelper.saveData(key: 'uId', value: userModel!.uId);
-        print(userModel!.name);
-        print(userModel!.email);
-        print(userModel!.ideas);
-        print(userModel!.uId);
+        print(userModel.name);
+        print(userModel.email);
+        print(userModel.ideas);
+        print(userModel.uId);
         print(uId);
       });
       emit(AppGetUserDataSuccessState());
@@ -263,7 +266,8 @@ class AppCubit extends Cubit<AppStates> {
     emit(AppLogoutLoadingState());
     await FirebaseAuth.instance.signOut().then((value) {
       CacheHelper.removeData(key: 'uId');
-      userModel = UserModel(name: '', email: '', ideas: []);
+      userModel = UserModel(
+          name: '', email: '', ideas: [], uId: '', image: '', isPremium: false);
       emit(AppLogoutSuccessState());
     });
   }
@@ -272,5 +276,129 @@ class AppCubit extends Cubit<AppStates> {
   void changeThemeMode() {
     isDark = !isDark;
     emit(AppChangeThemeModeState());
+  }
+
+  // google authentication if the user is new save his data in cloud firestore and if he is old get his data
+  Future<void> googleSignIn() async {
+    emit(AppGoogleSignInLoadingState());
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await FirebaseAuth.instance
+          .signInWithCredential(credential)
+          .then((value) {
+        CollectionReference collectionRef =
+            FirebaseFirestore.instance.collection('users');
+        collectionRef.doc(value.user!.uid).get().then((val) async {
+          if (val.exists) {
+            await getUserData();
+            emit(AppGoogleSignInSuccessState());
+          } else {
+            collectionRef.doc(value.user!.uid).set({
+              'name': value.user!.displayName,
+              'email': value.user!.email,
+              'ideas': [],
+              'uId': value.user!.uid,
+              'image': '',
+              'isPremium': false,
+            }).then((val) async {
+              CacheHelper.saveData(key: 'uId', value: value.user!.uid);
+              uId = value.user!.uid;
+              await getUserData();
+              emit(AppGoogleSignInSuccessState());
+            });
+          }
+        });
+      });
+    } catch (e) {
+      print(e);
+      emit(AppGoogleSignInErrorState());
+    }
+  }
+
+  // facebook authentication if the user is new save his data in cloud firestore and if he is old get his data
+  Future<void> facebookSignIn() async {
+    emit(AppFacebookSignInLoadingState());
+    try {
+      final LoginResult result = await FacebookAuth.instance.login();
+      if (result.status == LoginStatus.success) {
+        final OAuthCredential facebookAuthCredential =
+            FacebookAuthProvider.credential(result.accessToken!.token);
+        await FirebaseAuth.instance
+            .signInWithCredential(facebookAuthCredential)
+            .then((value) {
+          CollectionReference collectionRef =
+              FirebaseFirestore.instance.collection('users');
+          collectionRef.doc(value.user!.uid).get().then((val) async {
+            if (val.exists) {
+              await getUserData();
+              emit(AppFacebookSignInSuccessState());
+            } else {
+              collectionRef.doc(value.user!.uid).set({
+                'name': value.user!.displayName,
+                'email': value.user!.email,
+                'ideas': [],
+                'uId': value.user!.uid,
+                'image': '',
+                'isPremium': false,
+              }).then((val) async {
+                CacheHelper.saveData(key: 'uId', value: value.user!.uid);
+                uId = value.user!.uid;
+                await getUserData();
+                emit(AppFacebookSignInSuccessState());
+              });
+            }
+          });
+        });
+      }
+    } catch (e) {
+      print(e);
+      emit(AppFacebookSignInErrorState());
+    }
+  }
+  // TODO :  apple authentication if the user is new save his data in cloud firestore and if he is old get his data
+
+  int selectedIndex = 0;
+  void changeSelectedIndex(int index) {
+    selectedIndex = index;
+    emit(AppChangeSelectedIndexState());
+  }
+
+  // change the user premium in firebase and get the userdata again
+  Future<void> changeUserPremium() async {
+    emit(AppGetUserDataLoadingState());
+    try {
+      CollectionReference collectionRef =
+          FirebaseFirestore.instance.collection('users');
+      await collectionRef.doc(uId).update({'isPremium': true}).then((val) {
+        getUserData();
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  bool isUserPremium() {
+    return userModel.isPremium!;
+  }
+
+  Future changeUserIdeas() async {
+    emit(AppGetUserDataLoadingState());
+    try {
+      CollectionReference collectionRef =
+          FirebaseFirestore.instance.collection('users');
+      await collectionRef.doc(uId).update({
+        'ideas': selectedIdeas.map((e) => e.toJson()).toList(),
+      }).then((val) {
+        getUserData();
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:salim_cbt/src/screens/meditation_screen/meditatation_screen.dart';
+import 'package:salim_cbt/src/screens/payment/checkout_screen.dart';
+import 'package:salim_cbt/src/screens/payment/order_screen.dart';
 import 'package:salim_cbt/src/screens/profile_screen/profile_screen.dart';
 import 'package:salim_cbt/src/screens/sleep_screens/sleep_home_screen.dart';
 
@@ -16,6 +18,5 @@ class NavigationTabData {
 var navigationTabsData = [
   NavigationTabData(CupertinoIcons.home, "الرئيسية", const HomeScreen()),
   NavigationTabData(CupertinoIcons.person, "الحساب", const ProfileScreen()),
-  NavigationTabData(
-      CupertinoIcons.creditcard, "مدفوعاتك", const MeditateScreen()),
+  NavigationTabData(CupertinoIcons.creditcard, "مدفوعاتك", const Orderscreen()),
 ];

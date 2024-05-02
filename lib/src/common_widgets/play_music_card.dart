@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salim_cbt/src/app_cubit/app_cubit.dart';
 import 'package:salim_cbt/src/common_widgets/app_buttons.dart';
 import 'package:salim_cbt/src/screens/music_player_screen/sleep_music_player.dart';
 import 'package:salim_cbt/src/themes/theme.dart';
@@ -84,9 +85,6 @@ class PlayMusicCard extends StatelessWidget {
   }
 
   void onClicked(BuildContext context) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => const LightMusicPlayer()),
-    // );
+    AppCubit.get(context).changeSelectedIndex(2);
   }
 }

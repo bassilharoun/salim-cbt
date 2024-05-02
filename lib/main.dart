@@ -23,8 +23,7 @@ void main() async {
   await CacheHelper.init();
 
   runApp(MyApp(
-        startWidget: SplashView(),
-
+    startWidget: SplashView(),
   ));
 }
 
@@ -35,10 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-            create: (BuildContext context) => AppCubit())
-      ],
+      providers: [BlocProvider(create: (BuildContext context) => AppCubit())],
       child: AppTheme(
         child: Builder(
           builder: (context) {

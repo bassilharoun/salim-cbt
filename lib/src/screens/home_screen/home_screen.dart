@@ -186,9 +186,10 @@ class HomeScreen extends StatelessWidget {
                                       buttonColor:
                                           LightThemeData().primaryColor,
                                       textColor: LightThemeData().primaryColor,
-                                      borderColor:
-                                          LightThemeData().primaryColor,
-                                      onPressed: () {}),
+                                      borderColor: LightThemeData()
+                                          .primaryColor, onPressed: () {
+                                    cubit.changeSelectedIndex(2);
+                                  }),
                                 ],
                               ),
                             ],

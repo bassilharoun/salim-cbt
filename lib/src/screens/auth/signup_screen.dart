@@ -7,6 +7,7 @@ import 'package:salim_cbt/src/common_widgets/app_buttons.dart';
 import 'package:salim_cbt/src/common_widgets/app_text.dart';
 import 'package:salim_cbt/src/common_widgets/app_text_forms.dart';
 import 'package:salim_cbt/src/models/models.dart';
+import 'package:salim_cbt/src/screens/bottom_navigation_screen/bottom_navigation_screen.dart';
 import 'package:salim_cbt/src/screens/choose_topic_screen/choose_topic_screen.dart';
 import 'package:salim_cbt/src/themes/theme.dart';
 
@@ -22,7 +23,16 @@ class SignupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AppCubit cubit = AppCubit.get(context);
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is AppLoginSuccessState ||
+            state is AppGoogleSignInSuccessState ||
+            state is AppFacebookSignInSuccessState) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => BottomNavigationScreen()),
+              (route) => false);
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           backgroundColor: LightThemeData().scaffoldBackgroundColor,
@@ -81,11 +91,7 @@ class SignupScreen extends StatelessWidget {
                               buttonColor: LightThemeData().facebookColor,
                               borderColor: LightThemeData().facebookColor,
                               onPressed: () {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) => SigninScreen()),
-                                // );
+                                cubit.facebookSignIn();
                               },
                             ),
                           ),
@@ -97,11 +103,7 @@ class SignupScreen extends StatelessWidget {
                               "اكمل بواسطة جوجل",
                               buttonColor: Colors.transparent,
                               onPressed: () {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) => SigninScreen()),
-                                // );
+                                cubit.googleSignIn();
                               },
                             ),
                           ),

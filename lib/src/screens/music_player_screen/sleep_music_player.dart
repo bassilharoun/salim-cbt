@@ -2,6 +2,7 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rxdart/rxdart.dart';
 import 'dart:math' as math;
 
@@ -57,7 +58,8 @@ class PositionData {
   final Duration duration;
 }
 
-class _MusicPlayerState extends State<MusicPlayer> {
+class _MusicPlayerState extends State<MusicPlayer>
+    with TickerProviderStateMixin {
   late AudioPlayer _audioPlayer;
 
   Stream<PositionData> get _positionDataStream =>
@@ -72,16 +74,18 @@ class _MusicPlayerState extends State<MusicPlayer> {
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer()
-      ..setUrl(
-          "https://firebasestorage.googleapis.com/v0/b/salim-cbt.appspot.com/o/audio%2F%D8%A7%D9%84%D8%B4%D9%8A%D8%AE-%D8%A7%D8%B3%D9%84%D8%A7%D9%85%20%D9%A1%D9%A9%D9%A1.m4a?alt=media&token=d412557d-0946-4390-b3e2-b3d456d403ae");
+    _audioPlayer = AudioPlayer()..setUrl(widget.idea.record);
+    _controller = AnimationController(vsync: this);
   }
 
   @override
   void dispose() {
     _audioPlayer.dispose();
+    _controller.dispose();
     super.dispose();
   }
+
+  late final AnimationController _controller;
 
   @override
   Widget build(BuildContext context) {
@@ -108,19 +112,25 @@ class _MusicPlayerState extends State<MusicPlayer> {
             children: [
               getHeaderIcons(context, musicPlayerColors),
               const Spacer(
-                flex: 3,
+                flex: 2,
               ),
-              TwoSvgSwitcher(svgAssetPaths: [
-                "assets/images/breathing/light_breath_in.svg",
-                "assets/images/breathing/light_breath_out.svg"
-              ]),
+              Lottie.asset(
+                "assets/images/breathing/breathing_lottie.json",
+                width: 250,
+                height: 250,
+                fit: BoxFit.cover,
+                controller: _controller,
+                onLoaded: (composition) {
+                  _controller.duration = composition.duration;
+                },
+              ),
               const Spacer(
-                flex: 1,
+                flex: 2,
               ),
               getMusicControls(musicPlayerColors),
-              const Spacer(
-                flex: 1,
-              ),
+              // const Spacer(
+              //   flex: 1,
+              // ),
               StreamBuilder(
                   stream: _positionDataStream,
                   builder: (context, snapshot) {
@@ -213,7 +223,12 @@ class _MusicPlayerState extends State<MusicPlayer> {
               const SizedBox(width: 50),
               !(playing ?? false)
                   ? IconButton(
-                      onPressed: _audioPlayer.play,
+                      onPressed: () {
+                        setState(() {});
+                        _controller.repeat();
+
+                        _audioPlayer.play();
+                      },
                       icon: Icon(
                         Icons.play_circle_fill,
                         size: 80,
@@ -221,7 +236,11 @@ class _MusicPlayerState extends State<MusicPlayer> {
                       ),
                     )
                   : IconButton(
-                      onPressed: _audioPlayer.pause,
+                      onPressed: () {
+                        setState(() {});
+                        _controller.stop();
+                        _audioPlayer.pause();
+                      },
                       icon: Icon(
                         Icons.pause_circle_filled,
                         size: 80,

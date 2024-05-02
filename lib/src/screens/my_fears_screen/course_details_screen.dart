@@ -148,7 +148,9 @@ class CourseDetailsScreen extends StatelessWidget {
                             idea: user.ideas![index],
                             duration: "5 MIN",
                             isSelected: true,
-                            isPremium: index > 2 ? true : false,
+                            isPremium: cubit.isUserPremium()
+                                ? false
+                                : (index > 2 ? true : false),
                           );
                         },
                         separatorBuilder: (context, index) {
