@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">salim-cbt</string>
+    <string name="facebook_app_id">906546207914067</string>
+    <string name="fb_login_protocol_scheme">fb906546207914067</string>
+    <string name="facebook_client_token">6d79b01589019f085026731a342127e7</string>
+
+
+</resources>
